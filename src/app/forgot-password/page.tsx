@@ -11,15 +11,19 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    setError("");
     try {
       await api.forgotPassword(email);
       sessionStorage.setItem("reset_email", email);
       setSent(true);
       setTimeout(() => router.push("/reset-password"), 1500);
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -40,6 +44,7 @@ export default function ForgotPasswordPage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
               <Input type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
+            {error && <p className="text-sm text-red-600">{error}</p>}
             <Button type="submit" loading={loading} className="w-full">Send Reset Code</Button>
           </form>
         )}
